@@ -923,7 +923,10 @@ export function createScene(container, params) {
       scene.add(rocket);
     },
     undefined,
-    () => { /* keep the procedural rocket on load failure */ },
+    (err) => {
+      // Graceful degradation, but not silent — keep the procedural rocket and log why.
+      console.warn('rocket.glb failed to load — using the procedural rocket', err);
+    },
   );
 
   let raf = 0;
