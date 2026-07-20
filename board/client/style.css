@@ -53,11 +53,3 @@ html, body { margin: 0; height: 100%; background: var(--bg); overflow: hidden; f
 .roster .st-passed, .roster .st-shipped { color: var(--cyan); }
 .roster .st-failed, .roster .st-aborted { color: #f0505a; }
 .roster .live { margin-left: auto; font-weight: 700; font-size: 12px; letter-spacing: .08em; color: #06110b; background: #2fe37a; border-radius: 3px; padding: 1px 6px; }
-
-/* race leaderboard fallback (no-WebGL / reduced-motion) — static, no animation */
-.race-fallback { position: fixed; inset: 120px 16px 16px; overflow: auto; display: grid; gap: 8px; align-content: start; }
-.race-fallback .row { display: grid; grid-template-columns: 120px 1fr 32px; align-items: center; gap: 10px; font-size: 16px; padding: 4px 8px; border-left: 2px solid var(--line); }
-.race-fallback .cs { font-weight: 700; }
-.race-fallback .track { position: relative; height: 10px; border-radius: 5px; background: var(--panel); border: 1px solid var(--line); overflow: hidden; }
-.race-fallback .fill { position: absolute; inset: 0 auto 0 0; display: block; height: 100%; background: var(--cyan); }
-.race-fallback .n { text-align: right; opacity: .85; }
