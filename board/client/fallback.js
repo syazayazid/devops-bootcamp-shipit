@@ -24,6 +24,7 @@ export function createFallback(container) {
           <span class="cs">@${escapeHtml(s.callsign)}</span>
           <span class="st st-${escapeHtml(s.status)}">${escapeHtml(s.stage)} · ${escapeHtml(s.status)}</span>
           <span class="model">${escapeHtml(s.shipModel || '')}</span>
+          ${s.live ? '<span class="live">LIVE</span>' : ''}
         </div>`).join('');
     },
     dispose() { el.remove(); },

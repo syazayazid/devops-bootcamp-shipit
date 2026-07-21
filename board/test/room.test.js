@@ -16,6 +16,10 @@ test('sanitizeEvent trims + caps callsign, rejects empty', () => {
   assert.equal(sanitizeEvent({ ...base, callsign: 123 }), null);
 });
 
+test('sanitizeEvent lowercases the callsign (case-insensitive usernames; lowercase Pages hostnames)', () => {
+  assert.equal(sanitizeEvent({ ...base, callsign: 'JohnDoe' }).callsign, 'johndoe');
+});
+
 test('sanitizeEvent rejects unknown stage/status', () => {
   assert.equal(sanitizeEvent({ ...base, stage: 'orbit' }), null);
   assert.equal(sanitizeEvent({ ...base, status: 'exploded' }), null);

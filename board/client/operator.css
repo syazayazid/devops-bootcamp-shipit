@@ -1,0 +1,12 @@
+:root { color-scheme: dark; }
+body { margin: 0; background: #0b1220; color: #e2e8f0; font: 16px/1.5 ui-monospace, Menlo, Consolas, monospace; }
+#ops { max-width: 420px; margin: 0 auto; padding: 2rem 1rem; display: flex; flex-direction: column; gap: 1rem; }
+h1 { font-size: 1.1rem; letter-spacing: 0.1em; color: #22d3ee; margin: 0; }
+label { display: flex; flex-direction: column; gap: 0.3rem; color: #94a3b8; font-size: 0.9rem; }
+input, select { font: inherit; padding: 0.5rem 0.75rem; background: #0f172a; color: #e2e8f0; border: 2px solid #334155; border-radius: 8px; }
+input:focus, select:focus { outline: none; border-color: #22d3ee; }
+.buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+button { font: inherit; padding: 0.75rem; background: #111a2e; color: #e2e8f0; border: 2px solid #334155; border-radius: 8px; cursor: pointer; }
+button:hover { border-color: #22d3ee; }
+#start { grid-column: 1 / -1; border-color: #22d3ee; color: #22d3ee; }
+#result, #live { margin: 0; color: #94a3b8; min-height: 1.5em; }

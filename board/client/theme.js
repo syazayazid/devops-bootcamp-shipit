@@ -13,6 +13,7 @@ export const PALETTE = {
   labelText: '#eaf6ff',   // callsign fill
   labelOutline: '#04121f', // callsign stroke (legibility over any tint)
   grounded: '#f0505a',    // ABORT marker
+  live: '#2fe37a',        // LIVE halo — real Pages site answered 200 (blooms green)
 };
 
 export const LAYOUT = {

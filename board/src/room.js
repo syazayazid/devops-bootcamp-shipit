@@ -22,7 +22,7 @@ function cleanUrl(v) {
 // cosmetics. Returns null when the event is unusable.
 export function sanitizeEvent(raw) {
   raw = raw ?? {};
-  const callsign = cleanStr(raw.callsign, 39); // GitHub username max length
+  const callsign = cleanStr(raw.callsign, 39).toLowerCase(); // GitHub usernames are case-insensitive; Pages hostnames are lowercase — canonicalize
   if (!callsign) return null;
   if (!STAGES.includes(raw.stage)) return null;
   if (!STATUSES.includes(raw.status)) return null;
@@ -46,4 +46,6 @@ export class Roster {
   upsert(event) { this.ships.set(event.callsign, event); return event; } // latest-wins
   list() { return [...this.ships.values()]; }
   get size() { return this.ships.size; }
+  has(callsign) { return this.ships.has(callsign); }
+  get(callsign) { return this.ships.get(callsign); }
 }

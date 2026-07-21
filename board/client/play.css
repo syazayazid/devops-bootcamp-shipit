@@ -1,0 +1,54 @@
+:root { color-scheme: dark; }
+html, body { height: 100%; }
+body { margin: 0; background: #0b1220; color: #e2e8f0; font: 16px/1.4 ui-monospace, Menlo, Consolas, monospace; }
+#cockpit { height: 100dvh; display: flex; flex-direction: column; }
+#field { flex: 1; min-height: 0; }
+#dock {
+  border-top: 1px solid #1e293b;
+  width: 100%; max-width: 760px; margin: 0 auto; box-sizing: border-box;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+#statusrow { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+#status { color: #94a3b8; margin: 0; }
+#mute { background: none; border: none; padding: 0; cursor: pointer; font-size: 1rem; opacity: 0.7; }
+#mute:hover { opacity: 1; }
+/* The terminal: one line, greyed-out command lighting up as you type it. */
+#term { position: relative; background: #020617; border: 1px solid #1e293b; border-radius: 8px; overflow: hidden; }
+#term[data-done='1'] { border-color: #22d3ee; box-shadow: 0 0 0 1px #22d3ee; }
+#termbar { display: flex; align-items: center; gap: 6px; padding: 8px 10px; background: #0f172a; border-bottom: 1px solid #1e293b; }
+#termbar .dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.r { background: #7f1d1d; }
+.dot.y { background: #713f12; }
+.dot.g { background: #14532d; }
+#termtitle { margin-left: 8px; color: #64748b; font-size: 0.75rem; }
+/* One command, one line — sized so the longest story command (55 chars with
+   the $ prompt) fits the dock without wrapping. */
+#line { margin: 0; padding: 0.9rem 1rem 1.1rem; font-size: clamp(0.75rem, 2.1vw, 1.15rem); line-height: 1.5; white-space: pre; overflow: hidden; }
+#term:not([data-active='1']) #line { opacity: 0.45; }
+#ps1 { color: #4ade80; }
+#typed { color: #f1f5f9; }
+#rest { color: #475569; }
+#caret {
+  display: inline-block; width: 0.6ch; height: 1.2em; margin: 0 1px;
+  background: #22d3ee; vertical-align: text-bottom;
+  animation: caret-blink 1s steps(1) infinite;
+}
+#term[data-done='1'] #caret { background: #4ade80; }
+#term:not([data-active='1']) #caret { visibility: hidden; }
+#caret.err { background: #f43f5e; animation: none; }
+@keyframes caret-blink { 50% { opacity: 0; } }
+#term.shake { animation: term-shake 0.25s; }
+@keyframes term-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+/* The input only exists to catch keystrokes (and summon mobile keyboards);
+   the terminal line above is the visible surface. Not display:none — iOS
+   won't focus/keyboard an undisplayed input. */
+#entry { position: absolute; opacity: 0; left: 0; bottom: 0; width: 1px; height: 1px; border: 0; padding: 0; }
+@media (prefers-reduced-motion: reduce) {
+  #term.shake { animation: none; }
+  #caret { animation: none; }
+}

@@ -13,29 +13,23 @@ CI/CD-native.
 
 ## Status
 
-🚧 **Scaffold only.** This repo currently holds the brief, not the build.
+**Built and in use.** Learners fork this repo in CI/CD 1 and grow `.github/workflows/deploy.yaml`
+one session at a time, from the building blocks on the slides — the workflow file is deliberately
+NOT shipped here. `CLAUDE.md` holds the design rationale + the pinned contracts, including a
+snapshot of the taught workflow.
 
-- **`PROMPT.md`** — kickoff brief. Open a fresh Claude session here and start from it.
-- **`CLAUDE.md`** — design rationale + the pinned pipeline↔board contract.
-
-## Layout (target)
+## Layout
 
 ```
-board/       Mission Control — ws hub + Three.js projector spectator   → ghcr.io/infratify/shipit-board  (:3000)
-launchpad/   the learner ship microsite template (build/test/Dockerfile) → ghcr.io/infratify/shipit-launchpad (:8080)
-scripts/     e2e.sh — full loop proof (to be written)
-docs/        specs + plans
+board/       Mission Control — ws hub + Three.js projector spectator → ghcr.io/infratify/shipit-board (:3000)
+launchpad/   the learner ship microsite — static Vite + Three.js, ships to GitHub Pages (no image)
 ```
 
 ## The 4-session arc it serves
 
 | Session | Launch phase | Teaches |
 |---|---|---|
-| CI/CD 1 | Pad live on Pages | first workflow · trigger · job/step/runner |
-| CI/CD 2 | Fuelling + systems check | build · test gate (red = ABORT) · matrix · artifact |
-| CI/CD 3 | Launch clearance | secrets · environment · manual approval |
-| CI/CD 4 | LIFTOFF → orbit | image → GHCR → deploy to EC2 · tags · rollback |
-
-## Next step
-
-Read `PROMPT.md`, then brainstorm → spec → plan before writing code.
+| CI/CD 1 | Pad live on Pages | first workflow · trigger · job/step/runner · Pages deploy |
+| CI/CD 2 | Systems check | test gate (red = ABORT) · `needs` · branch protection |
+| CI/CD 3 | First contact + clearance | secret vs variable · report to Mission Control · push/PR trigger split · manual approval |
+| CI/CD 4 | LIFTOFF → orbit | pipeline builds the board image → GHCR → deploy to your EC2 |

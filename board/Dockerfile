@@ -5,6 +5,8 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY vite.config.js ./
 COPY client ./client
+# client/ship-mesh.js imports ../src/ships.js — the client shares it with the server
+COPY src ./src
 RUN npm run build                       # → /app/dist
 
 # --- runtime ---

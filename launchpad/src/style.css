@@ -105,3 +105,22 @@ body { font-family: system-ui, sans-serif; }
 }
 @keyframes tm-pulse { 50% { opacity: 0.35; } }
 @keyframes tm-fill { from { width: 0; } }
+
+.ready {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  padding: 0.7rem 1.4rem;
+  font: 700 0.95rem/1 ui-monospace, Menlo, Consolas, monospace;
+  letter-spacing: 0.08em;
+  color: #0b1220;
+  background: var(--ship-color, #22d3ee);
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15), 0 8px 30px rgba(0, 0, 0, 0.45);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.ready:hover { transform: translateX(-50%) translateY(-2px); }
+.ready:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }

@@ -48,8 +48,28 @@ export function createShip({ callsign, color, shipModel, template }) {
   label.position.y = 0.72;
   group.add(label);
 
-  group.userData = { callsign, color, shipModel, mat, trail, baseEmissive: 0.35 };
+  // LIVE halo — a green ring under the ship, shown only when the learner's real
+  // Pages site answers 200. Additive so it blooms; opacity pulses in scene.tick.
+  const liveMat = new THREE.MeshBasicMaterial({
+    color: new THREE.Color(PALETTE.live), transparent: true, opacity: 0,
+    side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false,
+  });
+  const liveRing = new THREE.Mesh(new THREE.RingGeometry(0.46, 0.56, 40), liveMat);
+  liveRing.rotation.x = -Math.PI / 2; // lie flat — a halo beneath the hull
+  liveRing.position.y = -0.42;
+  liveRing.visible = false;
+  group.add(liveRing);
+
+  group.userData = { callsign, color, shipModel, mat, trail, liveRing, live: false, baseEmissive: 0.35 };
   return group;
+}
+
+// Toggle the LIVE halo. Idempotent; scene.tick pulses its opacity while visible.
+export function setLive(group, on) {
+  const { liveRing } = group.userData;
+  if (!liveRing) return;
+  group.userData.live = !!on;
+  liveRing.visible = !!on;
 }
 
 export function setEmissiveBoost(group, intensity) {
@@ -68,6 +88,42 @@ export function setGrounded(group, on) {
   if (!mat) return;
   mat.emissive.set(on ? PALETTE.grounded : color);
   mat.emissiveIntensity = on ? 0.6 : baseEmissive;
+}
+
+// Texture-cascading dispose — carried from launchpad M1. Label sprite + trail
+// carry a texture/material, so this cascade is load-bearing.
+export function disposeObject3D(obj) {
+  obj.traverse((node) => {
+    if (node.isMesh || node.isSprite) {
+      node.geometry?.dispose?.();
+      const mats = Array.isArray(node.material) ? node.material : [node.material];
+      for (const m of mats) disposeMaterial(m);
+    }
+  });
+}
+function disposeMaterial(material) {
+  if (!material) return;
+  for (const value of Object.values(material)) if (value?.isTexture) value.dispose();
+  material.dispose();
+}
+
+// A ship clone shares the template's geometry + textures; disposing those would
+// break sibling clones. createShip flags cloned-model nodes: node.userData
+// .sharedGeometry and material.userData.keepTextures. Skip those; dispose the
+// rest (the trail + the callsign label the clone uniquely owns).
+export function disposeShip(group) {
+  group.traverse((node) => {
+    if (!node.isMesh && !node.isSprite) return;
+    if (node.geometry && !node.userData.sharedGeometry) node.geometry.dispose();
+    const mats = Array.isArray(node.material) ? node.material : [node.material];
+    for (const m of mats) {
+      if (!m) continue;
+      if (!m.userData.keepTextures) {
+        for (const v of Object.values(m)) if (v?.isTexture) v.dispose();
+      }
+      m.dispose();
+    }
+  });
 }
 
 // SET every saturated texel's hue to `hueFrac` ([0,1)), in-shader, after the

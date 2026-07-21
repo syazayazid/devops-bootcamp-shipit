@@ -1,0 +1,123 @@
+/* board/client/race-track.css — the shared race view (projector + cockpit).
+   Dark-only, same palette family as style.css / play.css. Rows flex-share the
+   viewport height so 40+ racers fit with zero scrolling. */
+.race-track {
+  --ship-w: 50px;
+  --accent: #22d3ee;
+  --lane-bg: #1e293b;
+  --fg: #e2e8f0;
+  --dim: #94a3b8;
+  display: flex; flex-direction: column;
+  width: 100%; height: 100%; min-height: 0; box-sizing: border-box;
+  padding: 0.5rem 1rem;
+  font: 13px/1.2 ui-monospace, Menlo, Consolas, monospace;
+  color: var(--fg);
+  /* Drifting starfield: layered star tiles at different speeds (parallax).
+     Each layer's shift is a whole multiple of its tile size — seamless loop. */
+  background-color: #0b1220;
+  background-image:
+    radial-gradient(2px 2px at 25% 20%, rgba(226, 232, 240, 0.55), transparent 60%),
+    radial-gradient(1.5px 1.5px at 70% 60%, rgba(226, 232, 240, 0.4), transparent 60%),
+    radial-gradient(2.5px 2.5px at 45% 85%, rgba(148, 163, 184, 0.5), transparent 60%),
+    radial-gradient(1.5px 1.5px at 90% 35%, rgba(148, 163, 184, 0.4), transparent 60%);
+  background-size: 260px 260px, 340px 340px, 420px 420px, 300px 300px;
+  animation: race-stars 60s linear infinite;
+}
+@keyframes race-stars {
+  to { background-position: -260px 0, -680px 0, -420px 0, -900px 0; }
+}
+.race-banner { min-height: 1.3em; padding: 0.15rem 0; text-align: center; color: var(--dim); }
+.race-track[data-phase='finished'] .race-banner { color: var(--accent); }
+
+.race-rows { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 2px; }
+.race-track[data-phase='idle'] .race-rows { opacity: 0.55; }
+
+.race-row { flex: 1 1 0; min-height: 10px; max-height: 48px; display: flex; align-items: center; gap: 0.5rem; }
+.race-row.me { flex-grow: 2; max-height: 64px; }
+.race-row.me .cs { color: var(--accent); font-weight: 700; }
+/* Cockpit: the own-ship row is pinned last (see race-track.js) — margin-top
+   auto hugs it to the bottom edge, right above the typing dock, with a thin
+   rule splitting it from the pack. */
+.race-track[data-me] .race-row.me { margin-top: auto; border-top: 1px solid var(--lane-bg); padding-top: 4px; }
+
+.race-row .rank { width: 2ch; text-align: right; color: var(--dim); font-size: 0.85em; }
+.race-row .cs { width: 14ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.race-row .meta { width: 8ch; text-align: right; color: var(--dim); font-variant-numeric: tabular-nums; }
+
+.race-row .lane { position: relative; flex: 1; min-width: 0; height: 6px; border-radius: 999px; background: var(--lane-bg); }
+.race-row .lane::after { /* finish line */
+  content: ''; position: absolute; right: 0; top: -5px; bottom: -5px; width: 2px;
+  background: var(--accent); opacity: 0.6;
+}
+.race-row .ship {
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: var(--ship-w); height: var(--ship-w);
+  display: grid; place-items: center;
+  transition: left 150ms linear;
+}
+.race-row .ship .sprite { width: 100%; height: 100%; display: block; object-fit: contain; }
+.race-row .ship .glyph { font-size: 16px; line-height: 1; }
+.race-row .ship .glyph::before { content: '▶'; }
+
+/* Idle float: the sprite bobs inside its (transitioned) position box, so the
+   two transforms never fight. --bob-dur/--bob-delay are set per row from a
+   callsign hash — 40 ships drift out of sync, stable across updates. */
+.race-row .ship .sprite,
+.race-row .ship .glyph {
+  animation: race-bob var(--bob-dur, 3s) ease-in-out var(--bob-delay, 0s) infinite;
+}
+@keyframes race-bob {
+  0%, 100% { transform: translateY(-7%) rotate(-2deg); }
+  50% { transform: translateY(7%) rotate(2deg); }
+}
+
+/* Engine glow: a blurred exhaust streak off the ship's tail, tinted with the
+   racer's colour, flickering like a burning thruster. */
+.race-row .ship::before {
+  content: '';
+  position: absolute;
+  right: 74%; top: 50%;
+  width: 45%; height: 16%;
+  border-radius: 999px;
+  background: linear-gradient(to left, var(--ship-color, var(--accent)), transparent);
+  filter: blur(2px);
+  transform: translateY(-50%);
+  transform-origin: right center;
+  animation: race-thrust 0.9s ease-in-out var(--bob-delay, 0s) infinite;
+}
+@keyframes race-thrust {
+  0%, 100% { opacity: 0.75; transform: translateY(-50%) scaleX(1); }
+  50% { opacity: 0.3; transform: translateY(-50%) scaleX(0.65); }
+}
+
+/* ENTER boost: a one-shot lunge + flare layered over the position glide.
+   race-track.js pulses the class for ~500ms. */
+.race-row .ship.boost .sprite,
+.race-row .ship.boost .glyph { animation: race-boost 0.45s ease-out; }
+@keyframes race-boost {
+  0% { transform: translateX(-4px) scale(1); }
+  35% { transform: translateX(6px) scale(1.35) rotate(2deg); }
+  100% { transform: translateX(0) scale(1); }
+}
+.race-row .ship.boost::before { animation: race-flare 0.45s ease-out; }
+@keyframes race-flare {
+  0% { opacity: 1; transform: translateY(-50%) scaleX(2.2); }
+  100% { opacity: 0.5; transform: translateY(-50%) scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .race-track { animation: none; }
+  .race-row .ship { transition: none; }
+  .race-row .ship .sprite,
+  .race-row .ship .glyph,
+  .race-row .ship.boost .sprite,
+  .race-row .ship.boost .glyph { animation: none; }
+  .race-row .ship::before,
+  .race-row .ship.boost::before { animation: none; opacity: 0.5; }
+}
+
+/* 25+ racers: reclaim label space, shrink sprites, keep every row legible */
+.race-rows[data-dense='1'] .cs { display: none; }
+.race-rows[data-dense='1'] { --ship-w: 31px; }
+.race-rows[data-dense='1'] .race-row { gap: 0.3rem; }
+.race-rows[data-dense='1'] .meta { font-size: 0.8em; width: 6ch; }

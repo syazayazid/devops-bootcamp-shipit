@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Operator — Ship It</title>
+    <link rel="stylesheet" href="./operator.css" />
+  </head>
+  <body>
+    <main id="ops">
+      <h1>MISSION CONTROL · OPS</h1>
+      <label>operator key <input id="key" type="password" autocomplete="off" /></label>
+      <label>session
+        <select id="session">
+          <option value="cicd3">cicd3</option>
+          <option value="cicd4">cicd4</option>
+        </select>
+      </label>
+      <div class="buttons">
+        <button id="start">▶ START RACE</button>
+        <button id="reset">↺ RESET</button>
+        <button id="view-orbit">VIEW: ORBIT</button>
+        <button id="view-race">VIEW: RACE</button>
+      </div>
+      <p id="result" aria-live="polite"></p>
+      <p id="live">connecting…</p>
+    </main>
+    <script type="module" src="./operator.js"></script>
+  </body>
+</html>

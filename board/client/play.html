@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cockpit — Ship It</title>
+    <link rel="stylesheet" href="./play.css" />
+  </head>
+  <body>
+    <main id="cockpit">
+      <div id="field"></div>
+      <div id="dock">
+        <div id="statusrow">
+          <p id="status">connecting…</p>
+          <button id="mute" type="button" aria-label="toggle sound">🔊</button>
+        </div>
+        <div id="term">
+          <div id="termbar">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span id="termtitle">shipit — cockpit</span>
+          </div>
+          <pre id="line" aria-live="polite"><span id="ps1">$ </span><span id="typed"></span><span id="caret"></span><span id="rest"></span></pre>
+          <input id="entry" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" autofocus aria-label="type the command" />
+        </div>
+      </div>
+    </main>
+    <script type="module" src="./play.js"></script>
+  </body>
+</html>
