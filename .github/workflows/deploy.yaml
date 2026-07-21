@@ -1,14 +1,15 @@
-name: deploy
+name: cicd
 on:
   pull_request:
-     types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened, closed]
+defaults:
+  run:
+    working-directory: launchpad
+
 jobs:
   test:
     if: github.event.pull_request.merged == false
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: launchpad
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -18,17 +19,23 @@ jobs:
         env:
           BOARD_URL: ${{ vars.BOARD_URL }}
           SHIPIT_TOKEN: ${{ secrets.SHIPIT_TOKEN }}
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: launchpad/dist
-      - uses: actions/deploy-pages@v5
   deploy:
     needs: test
     if: always() && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+      - run: npm clean-install
+      - run: npm run build
+        env:
+          VITE_BOARD_URL: ${{ vars.BOARD_URL }}
+          VITE_CALLSIGN: ${{ github.actor }}
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: launchpad/dist
       - uses: actions/deploy-pages@v5
+
 permissions:
   pages: write
   id-token: write
