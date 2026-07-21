@@ -1,11 +1,11 @@
 name: deploy
-on: [push, workflow_dispatch]
-defaults:
-  run:
-    working-directory: launchpad
+on:
+  pull_request:
+   types: [opened, synchronize, reopened, closed]
 
 jobs:
   test:
+    if: github.event.pull_request.merged == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -15,19 +15,19 @@ jobs:
       - run: bash scripts/report.sh
         env:
           BOARD_URL: ${{ vars.BOARD_URL }}
-          SHIPIT_TOKEN: ${{ secrets.SHIPIT_TOKEN }}   
+          SHIPIT_TOKEN: ${{ secrets.SHIPIT_TOKEN }}
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: launchpad/dist
+      - uses: actions/deploy-pages@v5  
+
   deploy:
     needs: test
+    if: always() && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-     - uses: actions/checkout@v7
-     - uses: actions/setup-node@v7
-     - run: npm clean-install
-     - run: npm run build
-     - uses: actions/upload-pages-artifact@v5
-       with:
-         path: launchpad/dist
-     - uses: actions/deploy-pages@v5
+      - uses: actions/deploy-pages@v5
 
 permissions:
   pages: write
