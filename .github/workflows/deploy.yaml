@@ -1,11 +1,15 @@
-name: deploy
-on: [push, workflow_dispatch]
+name: cicd
+on:
+ pull_request:
+  types: [opened, synchronize, reopened, closed]
+
 defaults:
   run:
     working-directory: launchpad
 
 jobs:
   test:
+    if: github.event.pull_request.merged == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -19,6 +23,7 @@ jobs:
 
   deploy:
     needs: test
+    if: always() && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
